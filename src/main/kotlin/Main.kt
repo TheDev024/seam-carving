@@ -1,23 +1,27 @@
 import java.awt.Color
-import java.awt.image.BufferedImage
 import java.io.File
-import java.util.Scanner
 import javax.imageio.ImageIO
 
-val scanner = Scanner(System.`in`)
+fun main(args: Array<String>) {
+    var inputPath: String? = null
+    var outputPath: String? = null
+    for (i in 0 until args.lastIndex) when (args[i]) {
+        "-in" -> inputPath = args[i + 1]
 
-fun main() {
-    println("Enter rectangle width:")
-    val width = scanner.nextInt() - 1
-    println("Enter rectangle height:")
-    val height = scanner.nextInt() - 1
-    println("Enter output image name:")
-    val outPath = scanner.next()
-    val outFile = File(outPath)
-    val image = BufferedImage(width + 1, height + 1, BufferedImage.TYPE_INT_BGR)
-    val graphic = image.graphics
-    graphic.color = Color.RED
-    graphic.drawLine(0, 0, width, height)
-    graphic.drawLine(0, height, width, 0)
-    ImageIO.write(image, "png", outFile)
+        "-out" -> outputPath = args[i + 1]
+    }
+    val inputFile = File(inputPath ?: "in.png")
+    val outputFile = File(outputPath ?: "out.png")
+    val inputImage = ImageIO.read(inputFile)
+    for (x in 0 until inputImage.width)
+        for (y in 0 until inputImage.height) {
+            val pixel = inputImage.getRGB(x, y)
+            val color = Color(pixel)
+            val r = 255 - color.red
+            val g = 255 - color.green
+            val b = 255 - color.blue
+            val negativeColor = Color(r, g, b)
+            inputImage.setRGB(x, y, negativeColor.rgb)
+        }
+    ImageIO.write(inputImage, "png", outputFile)
 }
