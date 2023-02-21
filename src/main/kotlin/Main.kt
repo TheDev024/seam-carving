@@ -1,6 +1,6 @@
-import java.awt.Color
+package seamcarving
+
 import java.io.File
-import javax.imageio.ImageIO
 
 fun main(args: Array<String>) {
     var inputPath: String? = null
@@ -12,16 +12,7 @@ fun main(args: Array<String>) {
     }
     val inputFile = File(inputPath ?: "in.png")
     val outputFile = File(outputPath ?: "out.png")
-    val inputImage = ImageIO.read(inputFile)
-    for (x in 0 until inputImage.width)
-        for (y in 0 until inputImage.height) {
-            val pixel = inputImage.getRGB(x, y)
-            val color = Color(pixel)
-            val r = 255 - color.red
-            val g = 255 - color.green
-            val b = 255 - color.blue
-            val negativeColor = Color(r, g, b)
-            inputImage.setRGB(x, y, negativeColor.rgb)
-        }
-    ImageIO.write(inputImage, "png", outputFile)
+
+    val processor = ImageProcessor(inputFile, outputFile)
+    processor.process(Type.ENERGY_IMAGE)
 }
