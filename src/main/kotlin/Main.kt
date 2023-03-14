@@ -13,6 +13,7 @@ fun main(args: Array<String>) {
     val inputFile = File(inputPath ?: "in.png")
     val outputFile = File(outputPath ?: "out.png")
 
-    val processor = ImageProcessor(inputFile, outputFile)
-    processor.process(Type.ENERGY_IMAGE)
+    val image = OriginalImage(inputFile)
+    // image.process(Type.ENERGY_IMAGE, outputFile)
+    image.findVerticalSeam(outputFile)
 }

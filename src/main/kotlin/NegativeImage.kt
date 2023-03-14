@@ -3,7 +3,7 @@ package seamcarving
 import java.awt.Color
 import java.awt.image.BufferedImage
 
-class NegativeImage(val image: BufferedImage) {
+class NegativeImage(private val image: BufferedImage) {
     fun process() {
         for (x in 0 until image.width) for (y in 0 until image.height) {
             val pixel = image.getRGB(x, y)
