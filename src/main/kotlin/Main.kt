@@ -14,6 +14,5 @@ fun main(args: Array<String>) {
     val outputFile = File(outputPath ?: "out.png")
 
     val image = OriginalImage(inputFile)
-    // image.process(Type.ENERGY_IMAGE, outputFile)
-    image.findVerticalSeam(outputFile)
+    image.findSeam(outputFile, OriginalImage.HORIZONTAL)
 }
