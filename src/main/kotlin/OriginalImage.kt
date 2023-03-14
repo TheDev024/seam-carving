@@ -65,34 +65,39 @@ class OriginalImage(
     }
 
     private fun findHorizontalSeam(seamMap: Array<Array<SeamPixel>>): SeamPixel {
-        for (x in 1 until (image.width)) for (y in 0 until image.height) {
-            val pixelsAbove = mutableListOf(seamMap[x - 1][y])
-            if (y != 0) pixelsAbove.add(seamMap[x - 1][y - 1])
-            if (y != image.height - 1) pixelsAbove.add(seamMap[x - 1][y + 1])
+        val transposedSeamMap = Array(seamMap.first().size) { Array(seamMap.size) { SeamPixel(0, 0, 0, 0, 0.0) } }
 
-            val minSeam = pixelsAbove.minBy { it.value }
-            seamMap[x][y].prevX = minSeam.x
-            seamMap[x][y].prevY = minSeam.y
-            seamMap[x][y].value += minSeam.value
+        seamMap.forEachIndexed { x, row ->
+            row.forEachIndexed { y, pixel ->
+                transposedSeamMap[y][x] = pixel
+            }
         }
 
-        return seamMap.last().minBy { it.value }
+        processDijkstra(transposedSeamMap, image.height, image.width)
+
+        val bottomRow = transposedSeamMap.map { it.last() }
+
+        return bottomRow.minBy { it.value }
     }
 
     private fun findVerticalSeam(seamMap: Array<Array<SeamPixel>>): SeamPixel {
-        for (y in 1 until (image.height)) for (x in 0 until image.width) {
-            val pixelsAbove = mutableListOf(seamMap[x][y - 1])
-            if (x != 0) pixelsAbove.add(seamMap[x - 1][y - 1])
-            if (x != image.width - 1) pixelsAbove.add(seamMap[x + 1][y - 1])
-
-            val minSeam = pixelsAbove.minBy { it.value }
-            seamMap[x][y].prevX = minSeam.x
-            seamMap[x][y].prevY = minSeam.y
-            seamMap[x][y].value += minSeam.value
-        }
+        processDijkstra(seamMap, image.width, image.height)
 
         val bottomRow = seamMap.map { it.last() }
 
         return bottomRow.minBy { it.value }
+    }
+
+    private fun processDijkstra(map: Array<Array<SeamPixel>>, width: Int, height: Int) {
+        for (y in 1 until height) for (x in 0 until width) {
+            val pixelsAbove = mutableListOf(map[x][y - 1])
+            if (x != 0) pixelsAbove.add(map[x - 1][y - 1])
+            if (x != width - 1) pixelsAbove.add(map[x + 1][y - 1])
+
+            val minSeam = pixelsAbove.minBy { it.value }
+            map[x][y].prevX = minSeam.x
+            map[x][y].prevY = minSeam.y
+            map[x][y].value += minSeam.value
+        }
     }
 }

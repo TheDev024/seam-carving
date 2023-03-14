@@ -16,6 +16,4 @@ class EnergyImage(private val image: BufferedImage) {
             image.setRGB(x, y, color.rgb)
         }
     }
-
-
 }
